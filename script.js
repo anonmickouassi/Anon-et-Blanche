@@ -5,20 +5,25 @@
    Pour ajouter une photo : mettez le fichier dans images/,
    ajoutez-le dans PH, puis ajoutez un bloc <div class="gs"> dans index.html
    ===================================================== */
+/* =====================================================
+   NOTRE MARIAGE - script.js
+   - CFG : numéro WhatsApp, date/heure, lieu
+   - PH : liste des photos (dossier images/)
+   ===================================================== */
 var CFG={
-  whatsapp:"2250777368778", // numéro des mariés, sans + ni espaces (ex. 2250700000000)
+  whatsapp:"2250777368778", // numéro des mariés, sans + ni espaces
   debut:"2026-12-26T12:30:00Z",      // Abidjan = heure UTC
   fin:"2026-12-26T18:00:00Z",
   lieu:"École Primaire Secondaire Président, Yopougon Akadjoba, Abidjan", carte:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Ecole Primaire Secondaire Président Yopougon Abidjan")
 };
 
-var PH={1:"images/portrait-1.jpg",2:"images/portraits-serie.jpg",3:"images/couleur-1.jpeg",4:"images/portrait-2.jpeg",};
+var PH={1:"images/portrait-1.jpg",2:"images/portraits-serie.jpg",3:"images/couleur-1.jpeg",4:"images/portrait-2.jpeg"};
+
 (function(){
   var $=function(s){return document.querySelector(s)};
   var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
 
   $$("img[data-photo]").forEach(function(i){i.src=PH[i.getAttribute("data-photo")]});
-
 
   /* écran d'accueil */
   var intro=$("#intro");
@@ -44,130 +49,171 @@ var PH={1:"images/portrait-1.jpg",2:"images/portraits-serie.jpg",3:"images/coule
   ["wheel","touchstart","keydown","mousedown"].forEach(function(ev){window.addEventListener(ev,function(e){if(auto&&e.target!==btn&&!btn.contains(e.target))stop()},{passive:true})});
   btn.onclick=function(){auto?stop():start()};
 
-  function petals(x,y){
-    var cols=["#2f8a5a","#c9a24a","#e9dcb5","#1d6b45"];
-    for(var i=0;i<20;i++){var p=document.createElement("span");p.className="petal";
-      p.style.left=x+"px";p.style.top=y+"px";p.style.background=cols[i%4];
-      p.style.setProperty("--dx",(Math.random()*300-150)+"px");p.style.setProperty("--dy",(120+Math.random()*320)+"px");p.style.setProperty("--r",(Math.random()*540-270)+"deg");
-      p.style.animationDelay=(Math.random()*.3)+"s";document.body.appendChild(p);
-      setTimeout(function(el){el.remove()},2400,p)}
-  }
-
-  
   // --- Gestion de la musique de fond (goodnessofgod.m4a) ---
-
-
   var audio = document.getElementById('bg-music');
-var muted = false;
-var mbtn = $("#mus");
-var mi = $("#mus-i");
+  var muted = false;
+  var mbtn = $("#mus");
+  var mi = $("#mus-i");
 
-var ON = '<path d="M4 9 H8 L13 5 V19 L8 15 H4 Z"/><path d="M16.500 9 C18 10.500 18 13.500 16.500 15"/><path d="M19 6.500 C22 9.500 22 14.500 19 17.500"/>';
-var OFF = '<path d="M4 9 H8 L13 5 V19 L8 15 H4 Z"/><path d="M17 9.500 L22 14.500 M22 9.500 L17 14.500"/>';
+  var ON = '<path d="M4 9 H8 L13 5 V19 L8 15 H4 Z"/><path d="M16.500 9 C18 10.500 18 13.500 16.500 15"/><path d="M19 6.500 C22 9.500 22 14.500 19 17.500"/>';
+  var OFF = '<path d="M4 9 H8 L13 5 V19 L8 15 H4 Z"/><path d="M17 9.500 L22 14.500 M22 9.500 L17 14.500"/>';
 
-function mIco() {
-  mi.innerHTML = muted ? OFF : ON;
-  mbtn.setAttribute("aria-label", muted ? "Activer la musique" : "Couper la musique");
-}
-mIco();
-
-// Fonction pour démarrer la musique
-function startMusic() {
-  if (audio) {
-    audio.volume = 0.5; // Ajustez le volume si besoin (entre 0.0 et 1.0)
-    audio.play().catch(error => {
-      console.log("Lecture automatique bloquée par le navigateur :", error);
-    });
+  function mIco() {
+    mi.innerHTML = muted ? OFF : ON;
+    mbtn.setAttribute("aria-label", muted ? "Activer la musique" : "Couper la musique");
   }
-}
-
-// Gestion du bouton Muet / Actif
-mbtn.onclick = function() {
-  if (!audio) return;
-  muted = !muted;
-  audio.muted = muted;
   mIco();
-};
 
-// Pause automatique si l'utilisateur change d'onglet
-document.addEventListener("visibilitychange", function() {
-  if (!audio) return;
-  if (document.hidden) {
-    audio.pause();
-  } else if (!muted) {
-    audio.play().catch(() => {});
-  }
-});
-
-// Fonction personnalisée pour générer des pétales en continu pendant les 10 secondes
-  function startPetalsShower() {
-    var cols = ["#5c3a21", "#c9a24a", "#2f8a5a", "#ffffff"]; // Marron, Or, Vert, Blanc
-    
-    // Crée des vagues de pétales en continu pendant 10 secondes (tous les 300ms)
-    var petalInterval = setInterval(function() {
-      for (var i = 0; i < 5; i++) {
-        var p = document.createElement("span");
-        p.className = "petal";
-        // Position aléatoire sur toute la largeur de l'écran en haut
-        p.style.left = Math.random() * window.innerWidth + "px";
-        p.style.top = "-20px";
-        p.style.background = cols[Math.floor(Math.random() * cols.length)];
-        
-        // Mouvement de chute et rotation
-        p.style.setProperty("--dx", (Math.random() * 200 - 100) + "px");
-        p.style.setProperty("--dy", (window.innerHeight + 100) + "px");
-        p.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
-        
-        document.body.appendChild(p);
-        
-        // Suppression après la chute
-        setTimeout(function(el) { el.remove(); }, 3500, p);
-      }
-    }, 300);
-
-    // Arrêter la création de nouveaux pétales après 10 secondes
-    setTimeout(function() {
-      clearInterval(petalInterval);
-    }, 10000);
-  }
-
-// Déclenchement lors de l'ouverture de l'invitation
-$("#open").onclick = function(e) {
-
-  startMusic();
-  startMusic();
-
-    // 2. Masquer la carte d'introduction et lancer la pluie de pétales de 10s
-    intro.classList.add("out");
-    
-    if (!reduce) {
-      startPetalsShower();
+  function startMusic() {
+    if (audio) {
+      audio.volume = 0.5;
+      audio.play().catch(error => {
+        console.log("Lecture automatique en attente d'interaction utilisateur :", error);
+      });
     }
+  }
 
-    // 3. Attendre exactement 10 secondes (10000ms) avant de révéler le contenu du site
-    setTimeout(function() {
-      intro.setAttribute("hidden", "");
+  // Tente de lancer la musique dès l'apparition de la page
+  startMusic();
+  document.addEventListener("click", function initAudio() {
+    startMusic();
+    document.removeEventListener("click", initAudio);
+  }, { once: true });
+
+  mbtn.onclick = function() {
+    if (!audio) return;
+    muted = !muted;
+    audio.muted = muted;
+    mIco();
+  };
+
+  document.addEventListener("visibilitychange", function() {
+    if (!audio) return;
+    if (document.hidden) {
+      audio.pause();
+    } else if (!muted) {
+      audio.play().catch(() => {});
+    }
+  });
+
+  // ============================================================
+  // PAGE DE PÉTALES (15 secondes d'introduction)
+  // ============================================================
+  var RAIN_MS = 15000; 
+
+  var FLEURS = [
+    ["#d4af37", "#f1d57a", "#7a4a2b"], // or
+    ["#2f8a5a", "#58b588", "#d4af37"], // vert
+    ["#ffffff", "#efe6d2", "#d4af37"], // blanc
+    ["#7a4a2b", "#a8704a", "#e3c987"]  // marron
+  ];
+  function flowerSVG(c, n) {
+    var s = '<svg viewBox="-24 -24 48 48" aria-hidden="true">', i;
+    function petal(len, w, fill, rot) {
+      return '<path d="M0 0 C' + (-w) + ' ' + (-len * .3) + ',' + (-w) + ' ' + (-len * .85) + ',0 ' + (-len) +
+             ' C' + w + ' ' + (-len * .85) + ',' + w + ' ' + (-len * .3) + ',0 0Z" fill="' + fill +
+             '" stroke="rgba(0,0,0,.18)" stroke-width=".5" transform="rotate(' + rot + ')"/>';
+    }
+    for (i = 0; i < n; i++) s += petal(22, 9, c[0], i * 360 / n);
+    for (i = 0; i < n; i++) s += petal(14, 6, c[1], i * 360 / n + 180 / n);
+    return s + '<circle r="4" fill="' + c[2] + '"/><circle r="1.6" cx="-1" cy="-1" fill="rgba(255,255,255,.55)"/></svg>';
+  }
+
+  function rainOn(L, msInfinite, o) {
+    var cols = [["#9a6a43", "#5e3720"], ["#7a4a2b", "#4a2a15"],
+                ["#ecd27f", "#b98a22"], ["#d4af37", "#9c7a1c"],
+                ["#4aa77a", "#1d6b45"], ["#2f8a5a", "#124a2f"],
+                ["#ffffff", "#ece2cc"], ["#fffdf7", "#e6dbc2"]];
+    var shapes = ["100% 0 100% 0", "60% 40% 70% 30% / 60% 60% 40% 40%", "0 100% 0 100%"];
+    var k = 0;
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+    function make() {
+      if (Math.random() < o.fl) {
+        var n = Math.random() < .5 ? 6 : 8, f = FLEURS[Math.floor(Math.random() * 4)];
+        var p = document.createElement("span"); p.className = "fl"; p.style.setProperty("--s", rnd(26, 46) + "px");
+        p.innerHTML = flowerSVG.call(null, f, n).replace("<svg", '<svg style="animation-duration:' + rnd(3.5, 8) + 's"');
+        return p;
+      }
+      var p = document.createElement("span"), q = document.createElement("i"), c = cols[Math.floor(Math.random() * cols.length)];
+      p.className = "pt"; p.style.setProperty("--s", rnd(11, 25) + "px");
+      q.style.background = "linear-gradient(135deg," + c[0] + "," + c[1] + ")";
+      q.style.borderRadius = shapes[k++ % 3];
+      q.style.setProperty("--sw", rnd(0.9, 1.8) + "s");
+      q.style.animationDelay = (-Math.random()) + "s";
+      p.appendChild(q);
+      return p;
+    }
+    function drop(delay) {
+      var p = make();
+      p.style.left = rnd(-2, 102) + "vw";
+      p.style.setProperty("--drift", rnd(-80, 80) + "px");
+      p.style.setProperty("--d", rnd(4, 6.6) + "s");
+      p.style.animationDelay = delay + "s";
+      p.addEventListener("animationend", function (ev) { if (ev.target === p) p.remove(); });
+      L.appendChild(p);
+    }
+    function fly(side, delay) {
+      var W = window.innerWidth, H = window.innerHeight, p = make();
+      p.style.animation = "none"; p.style.left = "0"; p.style.top = "0";
+      var x0, y0, xm, ym, xe, ye = H + 70;
+      if (side === "left")   { x0 = -40;    y0 = rnd(.05, .8) * H; xm = rnd(.2, .65) * W; ym = y0 - rnd(0, .25) * H; }
+      if (side === "right")  { x0 = W + 40; y0 = rnd(.05, .8) * H; xm = rnd(.35, .8) * W; ym = y0 - rnd(0, .25) * H; }
+      if (side === "bottom") { x0 = rnd(0, 1) * W; y0 = H + 40;    xm = x0 + rnd(-140, 140); ym = rnd(.2, .6) * H; }
+      xe = xm + rnd(-110, 110);
+      var a = p.animate([
+        { transform: "translate3d(" + x0 + "px," + y0 + "px,0)", opacity: 1, offset: 0, easing: "cubic-bezier(.15,.7,.3,1)" },
+        { transform: "translate3d(" + xm + "px," + ym + "px,0)", opacity: 1, offset: 0.38, easing: "ease-in" },
+        { transform: "translate3d(" + xe + "px," + ye + "px,0)", opacity: 1, offset: 1 }
+      ], { duration: rnd(4200, 6400), delay: delay * 1000, fill: "both" });
+      a.onfinish = function () { p.remove(); };
+      L.appendChild(p);
+    }
+    var sides = ["left", "right", "bottom"], per = o.per, t0 = Date.now(), i;
+    if (o.burst) {
+      var burst = window.innerWidth < 600 ? 22 : 34;
+      for (i = 0; i < burst; i++) sides.forEach(function (s) { fly(s, rnd(0, 1.4)); });
+    }
+    for (i = 0; i < 20; i++) drop(rnd(0, 1.2));
+    var tick = 0;
+    var iv = setInterval(function () {
+      if (msInfinite !== true && (Date.now() - t0 > msInfinite - 3800)) { clearInterval(iv); return; }
+      for (var j = 0; j < per; j++) drop(0);
+      if (tick++ % 2 === 0) fly(sides[Math.floor(Math.random() * 3)], 0);
+    }, 240);
+  }
+
+  function startRain(ms) {
+    var L = $("#rain");
+    if (!L) { L = document.createElement("div"); L.id = "rain"; L.setAttribute("aria-hidden", "true"); intro.appendChild(L); }
+    rainOn(L, ms, { burst: true, fl: 0, per: window.innerWidth < 600 ? 3 : 5 });
+  }
+
+  // --- PLUIE INFINIE SUR LE SITE ---
+  function bloomShower() {
+    var L = $("#bloom");
+    if (!L) { L = document.createElement("div"); L.id = "bloom"; L.setAttribute("aria-hidden", "true"); document.body.appendChild(L); }
+    rainOn(L, true, { burst: false, fl: 0, per: window.innerWidth < 600 ? 1 : 2 });
+  }
+
+  /* ----- Clic sur "Ouvrir" ----- */
+  $("#open").onclick = function (e) {
+    e.currentTarget.disabled = true;
+    startMusic();
+    var wait = reduce ? 1000 : RAIN_MS;
+    intro.classList.add("rain");
+    if (!reduce) startRain(RAIN_MS);
+
+    // Après les 15 secondes de transition : on arrive sur le site et les pétales continuent à l'infini
+    setTimeout(function () {
+      intro.classList.add("out");
       document.body.classList.add("go");
       document.body.classList.remove("lock");
       window.scrollTo(0, 0);
+      setTimeout(function () { intro.setAttribute("hidden", ""); var R = $("#rain"); if (R) R.innerHTML = ""; }, 1100);
       setIco(false);
-      if (!reduce) setTimeout(start, 3200);
-    }, 20000); // 10 secondes de transition
-
-  var r = e.currentTarget.getBoundingClientRect();
-  if (!reduce) petals(r.left + r.width / 2, r.top + r.height / 2);
-  intro.classList.add("out");
-  document.body.classList.add("go");
-  document.body.classList.remove("lock");
-  window.scrollTo(0, 0);
-  setTimeout(function () { intro.setAttribute("hidden", ""); }, 1000);
-  setIco(false);
-
-  // Lancement de votre musique au clic sur "Ouvrir"
-  startMusic();
-
-  if (!reduce) setTimeout(start, 3200);
-};
+      if (!reduce) { bloomShower(); setTimeout(start, 3200); }
+    }, wait);
+  };
 
   /* compte à rebours */
   var T=new Date(CFG.debut);
@@ -178,7 +224,7 @@ $("#open").onclick = function(e) {
   }
   tick();setInterval(tick,1000);
 
-  /* calendrier décembre 2026 (1er = mardi) */
+  /* calendrier décembre 2026 */
   var h="",c=1,first=1,days=31;
   for(var r=0;r<6&&c<=days;r++){h+="<tr>";for(var k=0;k<7;k++){
     if((r===0&&k<first)||c>days){h+="<td></td>"}
@@ -226,7 +272,7 @@ $("#open").onclick = function(e) {
     dlg.close();
   });
 
-  /* livre d'or (enregistré dans le navigateur) */
+  /* livre d'or */
   var K="livre-dor-anon-blanche",W=[];
   try{W=JSON.parse(localStorage.getItem(K)||"[]")}catch(e){W=[]}
   function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML}
@@ -242,12 +288,11 @@ $("#open").onclick = function(e) {
   });
 })();
 
-
+/* Gestion de la vidéo dans le carrousel */
 document.addEventListener('DOMContentLoaded', () => {
   const video = document.getElementById('wedding-video');
 
   if (video) {
-    // 1. Lancer ou Mettre en pause la vidéo au clic
     video.addEventListener('click', () => {
       if (video.paused) {
         video.play();
@@ -256,25 +301,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 2. Gestion automatique selon la position dans le carrousel
-    // (Ajuster la logique selon la façon dont votre carrousel gère data-pos)
     const observer = new MutationObserver(() => {
       const parentSlide = video.closest('.gs');
-      
-      // Si la vidéo n'est plus la diapositive active (ex: si data-pos n'est plus "0"), on la met en pause
       if (parentSlide && parentSlide.getAttribute('data-pos') !== '0') {
         video.pause();
       }
     });
 
-    // Surveiller les changements sur l'élément parent
     const parentSlide = video.closest('.gs');
     if (parentSlide) {
       observer.observe(parentSlide, { attributes: true, attributeFilter: ['data-pos'] });
     }
   }
 });
-
 
 // /* musique d'ambiance romantique (synthétisée, sans fichier) */
   
